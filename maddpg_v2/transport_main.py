@@ -119,7 +119,7 @@ def run(config):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--env_id", help="Name of environment", default="simple_push")
+    parser.add_argument("--env_id", help="Name of environment", default="transport")
     parser.add_argument("--model_name",
                         help="Name of directory to store " +
                              "model/training contents", default="./model")

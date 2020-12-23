@@ -119,6 +119,8 @@ class Transport(GridGame):
         self.reward=0
         self.reward_per = np.zeros(self.cars) #TODO: TO CHECK
 
+        self.root = None
+
     @property  # 直接掉一个变量 eg. env.observation_space
     def observation_space(self):
         return [Box(low=0, high=50, shape=(136,136)) for i in range(self.cars)]
@@ -619,6 +621,52 @@ class Transport(GridGame):
         self.game_tape.append(im_data)
         return im_data
 
+    def _close_view(self):
+        if self.root:
+            self.root.destory()
+            self.root = None
+            self.canvas = None
+        # self.done = True
+
+    def _render(self):
+        map = np.array(self.map)
+        scale = 30
+        width = map.shape[0] * scale
+        height = map.shape[1] * scale
+        if self.root is None:
+            self.root = tkinter.Tk()
+            self.root.title("escalator env")
+            self.root.protocol("WM_DELETE_WINDOW", self._close_view)
+            self.canvas = tkinter.Canvas(self.root, width=width, height=height)
+            self.canvas.pack()
+
+        self.canvas.delete(tkinter.ALL)
+        self.canvas.create_rectangle(0, 0, width, height, fill="black")
+
+        def fill_cell(x, y, color):
+            self.canvas.create_rectangle(
+                x * scale,
+                y * scale,
+                (x + 1) * scale,
+                (y + 1) * scale,
+                fill=color
+            )
+
+        for x in range(map.shape[0]):
+            for y in range(map.shape[1]):
+                if map[x, y] == 1:
+                    fill_cell(x, y, 'Grey')
+                if map[x, y] == 2:
+                    fill_cell(x, y, 'Green')
+                if map[x, y] == 3:
+                    fill_cell(x, y, 'Red')
+                for c in self.cars_list:
+                    if c.number == 0:
+                        fill_cell(c.position[0], c.position[1], "Blue")
+                    else:
+                        fill_cell(c.position[0], c.position[1], "Pink")
+
+        self.root.update()
 
 
 

@@ -119,7 +119,7 @@ def run(config):
         # for et_i in range(config.episode_length):
         while env.is_terminal() is not True:
 
-            # env.render()
+            # env._render()
             # rearrange observations to be per agent, and convert to torch Variable
             # print('step', et_i)
             # print(maddpg.nagents)

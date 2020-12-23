@@ -45,6 +45,7 @@ def make_parallel_env_transport(env_id, conf, n_rollout_threads, seed, discrete_
         return SubprocVecEnv([get_env_fn(i) for i in range(n_rollout_threads)])
 
 def run(config):
+    start_time = time.time()
     scores_window = deque(maxlen=100)
 
     model_dir = Path('./models') / config.env_id / config.model_name
@@ -120,7 +121,7 @@ def run(config):
 
         # while env.is_terminal() is not True:
 
-            # env.render()
+            env.render()
             # rearrange observations to be per agent, and convert to torch Variable
             # print('step', et_i)
             # print(maddpg.nagents)
@@ -196,7 +197,7 @@ def run(config):
         print('\r Episode {}\t Average Reward: {:.3f}\t Var Reward: {:.3f} \t '.format(ep_i, reward_epi, reward_epi_var) )
 
 
-
+    print('=============training time: ', time.time() - start_time)
     maddpg.save(run_dir / 'model.pt')
     env.close()
     logger.export_scalars_to_json(str(log_dir / 'summary.json'))
@@ -217,7 +218,7 @@ if __name__ == '__main__':
     parser.add_argument("--buffer_length", default=int(1e6), type=int)
     parser.add_argument("--n_episodes", default=50000, type=int)
     parser.add_argument("--episode_length", default=100, type=int)
-    parser.add_argument("--steps_per_update", default=100, type=int)
+    parser.add_argument("--steps_per_update", default=50, type=int)
     parser.add_argument("--batch_size",
                         default=1024, type=int,
                         help="Batch size for model training")
@@ -226,7 +227,7 @@ if __name__ == '__main__':
     parser.add_argument("--final_noise_scale", default=0.0, type=float)
     parser.add_argument("--save_interval", default=1000, type=int)
     parser.add_argument("--hidden_dim", default=64, type=int)
-    parser.add_argument("--lr", default=0.001, type=float)   # 0.001
+    parser.add_argument("--lr", default=0.005, type=float)   # 0.001
     parser.add_argument("--tau", default=0.01, type=float)
     parser.add_argument("--agent_alg",
                         default="MADDPG", type=str,

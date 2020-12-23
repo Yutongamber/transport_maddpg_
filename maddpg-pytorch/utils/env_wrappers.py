@@ -203,3 +203,6 @@ class DummyVecEnv(VecEnv):
 
     def is_terminal(self):
         return self.envs[0].is_terminal()
+
+    def _render(self):
+        return self.envs[0]._render()
